@@ -1,3 +1,6 @@
+
+
+
 const issues = [
   {
     "body": "Instructions say GET /team and POST /newteam. Rspec wants GET/newteam and POST/team.",
@@ -9000,3 +9003,37 @@ const issues = [
     "url": "https://api.github.com/repos/learn-co-curriculum/js-donut-lab/issues/2"
   }
 ];
+
+var nonAutomaticIssues = issues.reduce((nonAutoIssues, issue) => {
+  if (!issue.body.includes('automatically')) {
+    nonAutoIssues.push(issue);
+  }
+  return nonAutoIssues
+}, []);
+
+var issuesWithUpdatedApiUrl = issues
+  .map(issue => Object.assign({}, issue,{
+     url: issue.url.replace('api.github.com', 'api-v2.github.com')
+   }));
+
+var openIssues = issues
+  .reduce((openIssuesMap, issue) => {
+    if (issue.state == 'open') {
+      openIssuesMap.push(issue);
+    }
+    return openIssuesMap;
+  }, []);
+
+var commentCountAcrossIssues = issues
+  .map(issue => issue.comments_count )
+  .reduce((sum, commentCount) => sum + commentCount , 0);
+
+const tbody = document.getElementById('results');
+tbody.innerHTML = nonAutomaticIssues
+  .map(issue => `<tr>
+    <td>${issue.body}</td>
+    <td>${issue.created_at}</td>
+    <td>${issue.state}</td>
+    </tr>`
+  )
+  .join('');
